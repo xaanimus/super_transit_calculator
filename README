@@ -1,0 +1,7 @@
+to build, make a directory named build in the project root and run:
+sh runCmake.sh
+sh runMake.sh
+
+to test, run
+sh runTest.sh
+
