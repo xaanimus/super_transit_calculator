@@ -19,7 +19,7 @@ void trip_searcher::search() {
 }
 
 static void convert_transit_info(transit_info info) {
-    node_database db(info, 0min);
+    node_database db(info, 0min, 0);
     //convert info into database where
     //   * nodes are interconnected
     //       - to next

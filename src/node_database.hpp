@@ -13,7 +13,8 @@ public:
      * 1. Each stop is connected to the next stop in its schedule if it exists
      * 2. 
      */
-    node_database(transit_info info, std::chrono::minutes max_wait_time);
+    node_database(transit_info info, std::chrono::minutes max_wait_time,
+                  miles max_walking_distance);
     ~node_database();
 
     node_storage& nodes();

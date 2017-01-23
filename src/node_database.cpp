@@ -1,7 +1,10 @@
+#include <iostream>
 #include <math.h>
 #include "node_database.hpp"
 
 using namespace std::literals;
+
+const double WALKING_TIME_MINUTES_PER_MILE = 30;
 
 /** TODO improve
  * checks if days a and b match
@@ -10,8 +13,14 @@ bool check_days_match(std::string a, std::string b) {
     return a == b;
 }
 
-node_database::node_database(transit_info info, std::chrono::minutes max_wait_time)
-    : m_max_wait_time(max_wait_time)
+std::chrono::minutes walking_time(miles dist) {
+    int time_in_minutes = (int) ceil(WALKING_TIME_MINUTES_PER_MILE * dist);
+    return std::chrono::minutes(time_in_minutes);
+}
+
+node_database::node_database(transit_info info, std::chrono::minutes max_wait_time,
+                             miles max_walking_distance)
+    : m_max_wait_time(max_wait_time), m_max_walking_distance(max_walking_distance)
 {
     //add all schedules
     for (auto& schedule : info.stop_schedules) {
@@ -19,6 +28,7 @@ node_database::node_database(transit_info info, std::chrono::minutes max_wait_ti
     }
 
     connect_nodes_from_stops();
+    connect_nodes_by_walking();
 }
 
 node_database::~node_database() {
@@ -37,7 +47,7 @@ void node_database::add_schedule(const stop_info_schedule& schedule) {
     for (auto& stop : schedule.stops) {
         stop_node* new_node = new stop_node(stop.name, schedule.route_number, schedule.day,
                                             stop.direction, stop.time_of_stop,
-                                            std::vector<edge>(), nullptr, 0, {});
+                                            std::vector<edge>(), nullptr, 0, stop.location );
         m_nodes.push_back(new_node);
         if (previous_node != nullptr) {
             std::chrono::minutes diff =
@@ -82,17 +92,12 @@ void node_database::connect_nodes_from_stops() {
     }
 }
 
-const double WALKING_TIME_MINUTES_PER_MILE = 30;
-std::chrono::minutes walking_time(miles dist) {
-    int time_in_minutes = (int) ceil(WALKING_TIME_MINUTES_PER_MILE * dist);
-    return std::chrono::minutes(time_in_minutes);
-}
-
 void node_database::connect_nodes_by_walking() {
     for (node* n: m_nodes) {
         for(node* other: m_nodes) {
             miles distance = n->location().distance_to(other->location());
-            if (n == other || distance > m_max_walking_distance)
+            bool days_match = check_days_match(n->day(), other->day());
+            if (n == other || distance > m_max_walking_distance || !days_match)
             {
                 continue;
             }
