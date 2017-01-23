@@ -1,0 +1,3 @@
+-std=c++14
+-I~/Developer/bravo/super_transit_calculator/src
+-I~/Developer/bravo/super_transit_calculator/libs

@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libstransit_lib.a  CMakeFiles/stransit_lib.dir/node.cpp.o CMakeFiles/stransit_lib.dir/node_database.cpp.o CMakeFiles/stransit_lib.dir/super_transit.cpp.o CMakeFiles/stransit_lib.dir/transit_time.cpp.o CMakeFiles/stransit_lib.dir/units_coords.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libstransit_lib.a
