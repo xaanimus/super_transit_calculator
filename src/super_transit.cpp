@@ -6,32 +6,6 @@
 using namespace stransit;
 using namespace std::literals;
 
-
-struct starting_position {
-
-};
-
-class trip_searcher {
-public:
-    void search();
-};
-
-void trip_searcher::search() {
-}
-
-static void convert_transit_info(transit_info info, std::chrono::minutes max_wait_time,
-                                 miles max_walk_dist)
-{
-    //node_database db(info, max_wait_time, max_walk_dist);
-    //convert info into database where
-    //   * nodes are interconnected
-    //       - to next
-
-    //   * can ask db for heuristic from node to finish
-    //   * can ask db for start's next closest neighbor
-    //   * can ask db for start's current closest neighbor's distance (db keeps track of this)
-}
-
 struct node_wrapper {
     node_wrapper(node* ptr_, std::chrono::minutes time_): ptr(ptr_), total_time(time_) {}
     node* ptr;
@@ -84,3 +58,4 @@ std::vector<stransit::trip> get_trips(stransit::trip_options options) {
 
     return std::vector<stransit::trip>();
 }
+
