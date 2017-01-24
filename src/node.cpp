@@ -3,6 +3,14 @@
 
 node::~node() {}
 
+std::chrono::minutes node::time() {
+    return walking_time(this->distance());
+}
+
+void node::set_time(std::chrono::minutes new_time) {
+    this->set_distance(walking_distance_for_time(new_time));
+}
+
 stop_node::stop_node(std::string name_, int route_number_, std::string day_,
                      std::string direction_, time_hm time_of_stop_, std::vector<edge> neighbors_,
                      node* previous_, miles distance_, geo_coords location_)

@@ -42,9 +42,13 @@ namespace stransit {
     struct trip_options {
         geo_coords start_position;
         time_hm start_time;
+        std::string start_day;
         transit_info info;
         geo_coords end_position;
         miles end_radius;
+
+        std::chrono::minutes max_wait_time;
+        miles max_walk_dist;
     };
 
     std::vector<trip> get_trips(trip_options options);

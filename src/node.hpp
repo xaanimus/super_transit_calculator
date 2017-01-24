@@ -24,6 +24,11 @@ public:
     virtual void set_previous(node* previous_node) = 0;
     virtual miles distance() const = 0;
     virtual void set_distance(miles dist) = 0;
+
+    std::chrono::minutes time();
+    void set_time(std::chrono::minutes new_time);
+
+    bool visited = false;
 };
 
 /**

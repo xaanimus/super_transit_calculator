@@ -5,6 +5,7 @@ using namespace stransit;
 using radians = double;
 
 static const miles EARTH_RADIUS_MILES = 3959;
+const double WALKING_TIME_MINUTES_PER_MILE = 30;
 
 static double sin2(double x) {
     return pow(sin(x), 2);
@@ -21,4 +22,13 @@ miles geo_coords::distance_to(const stransit::geo_coords &other) const {
     degrees c = 2 * atan2(sqrt(a), sqrt(1-a));
     miles distance = EARTH_RADIUS_MILES * c;
     return distance;
+}
+
+std::chrono::minutes stransit::walking_time(miles dist) {
+    int time_in_minutes = (int) ceil(WALKING_TIME_MINUTES_PER_MILE * dist);
+    return std::chrono::minutes(time_in_minutes);
+}
+
+miles stransit::walking_distance_for_time(std::chrono::minutes t) {
+    return t.count() / WALKING_TIME_MINUTES_PER_MILE;
 }
