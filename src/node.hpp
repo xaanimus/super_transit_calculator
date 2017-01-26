@@ -5,8 +5,10 @@
 #include <memory.h>
 
 using namespace stransit;
+using namespace std::literals;
 
 struct edge;
+struct optional_edge;
 
 class node {
 public:
@@ -20,8 +22,8 @@ public:
     virtual std::vector<edge>& neighbors() = 0;
     virtual const geo_coords& location() const = 0;
 
-    virtual node* previous() const = 0;
-    virtual void set_previous(node* previous_node) = 0;
+    virtual const optional_edge& previous() const = 0;
+    virtual void set_previous(const optional_edge& previous_node) = 0;
     virtual miles distance() const = 0;
     virtual void set_distance(miles dist) = 0;
 
@@ -39,13 +41,18 @@ struct edge {
     node& neighbor;
 };
 
+struct optional_edge {
+    std::chrono::minutes time_interval;
+    node* neighbor;
 
+};
+const optional_edge optional_edge_nil = {0min, nullptr};
 
 class stop_node : public node {
 public:
     stop_node(std::string name_, int route_number_, std::string day_,
               std::string direction_, time_hm time_of_stop_, std::vector<edge> neighbors,
-              node* previous_, miles distance_, geo_coords location_);
+              optional_edge previous_, miles distance_, geo_coords location_);
 
     std::string name() const override;
     int route_number() const override;
@@ -55,8 +62,8 @@ public:
     std::vector<edge>& neighbors() override;
     const geo_coords& location() const override;
 
-    node* previous() const override;
-    void set_previous(node* previous_node) override;
+    const optional_edge& previous() const override;
+    void set_previous(const optional_edge& previous_node) override;
     miles distance() const override;
     void set_distance(miles dist) override;
     void add_neighbor(edge neighbor);
@@ -72,7 +79,7 @@ private:
     std::vector<edge> m_neighbors;
     geo_coords m_location;
 
-    node* m_previous;
+    optional_edge m_previous;
     miles m_distance;
 };
 

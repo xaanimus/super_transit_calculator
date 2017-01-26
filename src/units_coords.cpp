@@ -15,6 +15,10 @@ static radians deg_to_rad(degrees deg) {
     return deg / 180 * M_PI;
 }
 
+miles stransit::literals::operator "" _mi(long double value) {
+    return miles(value);
+}
+
 miles geo_coords::distance_to(const stransit::geo_coords &other) const {
     degrees delta_lon = deg_to_rad(other.longitude - longitude);
     degrees delta_lat = deg_to_rad(other.latitude - latitude);

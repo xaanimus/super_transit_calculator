@@ -1,4 +1,8 @@
 
 Catch
 - https://github.com/philsquared/Catch
+- used in tests (not in the library)
 
+Json
+- https://github.com/nlohmann/json (MIT)
+- used in tests

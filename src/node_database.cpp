@@ -3,7 +3,7 @@
 #include "node_database.hpp"
 
 using namespace std::literals;
-
+using node_storage = node_database::node_storage;
 
 /** TODO improve
  * checks if days a and b match
@@ -28,6 +28,7 @@ node_database::node_database(transit_info info, std::chrono::minutes max_wait_ti
     connect_nodes_from_stops();
     connect_nodes_by_walking();
     connect_starting_nodes();
+    add_final_nodes();
 }
 
 node_database::~node_database() {
@@ -50,7 +51,7 @@ void node_database::add_schedule(const stop_info_schedule& schedule) {
     for (auto& stop : schedule.stops) {
         stop_node* new_node = new stop_node(stop.name, schedule.route_number, schedule.day,
                                             stop.direction, stop.time_of_stop,
-                                            std::vector<edge>(), nullptr, 0,
+                                            std::vector<edge>(), optional_edge_nil, 0,
                                             stop.location );
         m_nodes.push_back(new_node);
         if (previous_node != nullptr) {
@@ -132,4 +133,25 @@ void node_database::add_final_nodes() {
             m_final_nodes.push_back(n);
         }
     }
+}
+
+bool node_database::done_searching() {
+
+    //remove all visited nodes from m_final_nodes
+    for (auto itr = m_final_nodes.begin(); itr < m_final_nodes.end(); ++itr) {
+        if ((*itr)->visited) {
+            m_solved_nodes.push_back(*itr);
+            itr = m_final_nodes.erase(itr);
+        }
+    }
+
+    return m_final_nodes.empty();
+}
+
+start_node& node_database::starting_node() {
+    return m_starting_node;
+}
+
+const node_storage& node_database::solved_nodes() const {
+    return m_solved_nodes;
 }

@@ -18,8 +18,8 @@ public:
     std::vector<edge>& neighbors();
     const geo_coords& location() const;
 
-    node* previous() const;
-    void set_previous(node* previous_node);
+    const optional_edge& previous() const;
+    void set_previous(const optional_edge& previous_node);
     miles distance() const;
     void set_distance(miles dist);
 
@@ -29,7 +29,7 @@ private:
     std::vector<edge> m_neighbors;
     geo_coords m_location;
 
-    node* m_previous;
+    optional_edge m_previous;
 };
 
 

@@ -25,3 +25,13 @@ std::chrono::minutes time_hm::difference_to(const stransit::time_hm &other) cons
     }
 }
 
+time_hm time_hm::add(const time_hm& other) const {
+    int total_minutes = other.m_minutes.count() + m_minutes.count();
+    int excess_minutes_in_hours = total_minutes / 60;
+    int total_hours = excess_minutes_in_hours + other.m_hours.count() + m_hours.count();
+    return {std::chrono::hours(total_hours % 24), std::chrono::minutes(total_minutes % 60)};
+}
+
+time_hm time_hm::add(const std::chrono::minutes& other) const {
+    return add({0h, other});
+}

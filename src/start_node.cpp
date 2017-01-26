@@ -2,7 +2,7 @@
 
 start_node::start_node(std::string current_day, time_hm current_time, geo_coords location)
     : m_current_day(current_day), m_current_time(current_time), m_neighbors(),
-      m_location(location), m_previous(nullptr) {}
+      m_location(location), m_previous() {}
 
 std::string start_node::name() const {
     return "__start_node";
@@ -32,11 +32,11 @@ const geo_coords& start_node::location() const {
     return m_location;
 }
 
-node* start_node::previous() const {
+const optional_edge& start_node::previous() const {
     return m_previous;
 }
 
-void start_node::set_previous(node *previous_node) {
+void start_node::set_previous(const optional_edge& previous_node) {
     m_previous = previous_node;
 }
 

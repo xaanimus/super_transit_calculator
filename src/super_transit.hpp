@@ -9,6 +9,27 @@
 namespace stransit {
 
     struct trip {
+
+        struct trip_edge {
+            std::chrono::minutes period_of_travel;
+            miles length_of_travel;
+            std::string description;
+        };
+
+        struct trip_waypoint {
+            enum kind {
+                waypoint_begin,
+                waypoint_stop,
+                waypoint_finish,
+            };
+
+            std::string name;
+            time_hm time;
+            kind point_kind;
+            trip_edge path_to_next;
+        };
+
+        std::vector<trip_waypoint> waypoints;
     };
 
     struct stop_info {
@@ -37,7 +58,11 @@ namespace stransit {
          * Grouped by route_number, day, direction
          */
         std::vector<stop_info_schedule> stop_schedules;
+        void add_stop(const stop_info& stop);
     };
+
+    transit_info generate_transit_info_from_json(const std::string& route_schedule,
+                                                 const std::string& stop_locations);
 
     struct trip_options {
         geo_coords start_position;
@@ -45,7 +70,6 @@ namespace stransit {
         std::string start_day;
         transit_info info;
         geo_coords end_position;
-        miles end_radius;
 
         std::chrono::minutes max_wait_time;
         miles max_walk_dist;

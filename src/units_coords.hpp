@@ -8,6 +8,10 @@ namespace stransit {
     using degrees = double;
     using miles = double;
 
+    namespace literals {
+        miles operator "" _mi(long double value);
+    }
+
     struct geo_coords {
         degrees longitude, latitude;
 

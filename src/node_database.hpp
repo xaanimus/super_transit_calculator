@@ -33,6 +33,8 @@ public:
     std::chrono::minutes heuristic(const node& n) const;
 
     start_node& starting_node();
+    bool done_searching();
+    const node_storage& solved_nodes() const;
 
 private:
     /**
@@ -59,5 +61,6 @@ private:
     geo_coords m_start_point, m_end_point;
     start_node m_starting_node;
     node_storage m_final_nodes;
+    node_storage m_solved_nodes;
 };
 
