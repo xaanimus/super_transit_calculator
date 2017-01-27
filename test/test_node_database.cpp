@@ -5,13 +5,6 @@
 
 using namespace std::literals;
 
-node_database::node_storage::iterator find_node(node_database::node_storage& storage,
-                                                std::string name) {
-    return std::find_if(storage.begin(), storage.end(), [&name](node* n){
-            return n->name() == name;
-        });
-}
-
 TEST_CASE("Add Schedule") {
     // Checks that when a schedule is added, adjacent stops are accessible by using node::neighbors
 
@@ -33,9 +26,9 @@ TEST_CASE("Add Schedule") {
 
     REQUIRE(db.nodes().size() == 3);
 
-    node* alpha = db.nodes()[0],
-        * bravo = db.nodes()[1],
-        * charlie = db.nodes()[2];
+    node* alpha = db.nodes().at("alpha")[0],
+        * bravo = db.nodes().at("bravo")[0],
+        * charlie = db.nodes().at("charlie")[0];
 
     auto& a_neighbors = alpha->neighbors();
     auto a_itr_alpha = std::find_if(a_neighbors.begin(), a_neighbors.end(),
@@ -89,7 +82,7 @@ TEST_CASE("Add Schedule") {
     REQUIRE(c_itr_charlie == c_neighbors.end());
 }
 
-TEST_CASE("connect nodes") {
+TEST_CASE("connect nodes from stops") {
 
     //both routes go through stop "bravo"
     stop_info_schedule schedule_1 = {
@@ -119,19 +112,18 @@ TEST_CASE("connect nodes") {
 
     node_database::node_storage& nodes = db.nodes();
 
-    auto bravo_1 = std::find_if(nodes.begin(), nodes.end(), [](node* n) -> bool {
-            return n->route_number() == 1 && n->name() == "bravo";
-        });
+    node* bravo = nodes.at("bravo")[0];
+    REQUIRE(bravo->route_number() == 1);
 
-    REQUIRE(bravo_1 != nodes.end());
-
-    std::vector<edge>& bravo_neighbors = (*bravo_1)->neighbors();
-    auto charlie_itr = std::find_if(bravo_neighbors.begin(), bravo_neighbors.end(), [](edge& n){
-            return n.neighbor.name() == "charlie";
-        });
-    auto echo_itr = std::find_if(bravo_neighbors.begin(), bravo_neighbors.end(), [](edge& n){
-            return n.neighbor.name() == "echo";
-        });
+    edge_storage& bravo_neighbors = bravo->neighbors();
+    auto charlie_itr = std::find_if(bravo_neighbors.begin(), bravo_neighbors.end(),
+                                    [](const edge& n){
+                                        return n.neighbor.name() == "charlie";
+                                    });
+    auto echo_itr = std::find_if(bravo_neighbors.begin(), bravo_neighbors.end(),
+                                 [](const edge& n){
+                                     return n.neighbor.name() == "echo";
+                                 });
 
     REQUIRE( charlie_itr != bravo_neighbors.end() );
     REQUIRE( echo_itr != bravo_neighbors.end() );
@@ -139,7 +131,7 @@ TEST_CASE("connect nodes") {
 }
 
 TEST_CASE("connect nodes walking") {
-    
+
     stop_info_schedule sched_1 = {
         .route_number = 1,
         .day = "Monday",
@@ -168,15 +160,11 @@ TEST_CASE("connect nodes walking") {
 
     node_database::node_storage& nodes = db.nodes();
 
-    auto alpha_node = std::find_if(nodes.begin(), nodes.end(), [](node* n)->bool{
-            return n->name() == "alpha";
-        });
+    node* alpha = nodes["alpha"][0];
 
-    REQUIRE( alpha_node != nodes.end());
-
-    std::vector<edge>& neighbors = (*alpha_node)->neighbors();
+    edge_storage& neighbors = alpha->neighbors();
     int count = 0;
-    for (edge& e: neighbors) {
+    for (const edge& e: neighbors) {
         if (e.neighbor.name() == "bravo" ||
             e.neighbor.name() == "delta") {
             count++;
@@ -187,7 +175,7 @@ TEST_CASE("connect nodes walking") {
 }
 
 TEST_CASE ("heuristic") {
-    
+
     stop_info_schedule sched_1 = {
         .route_number = 1,
         .day = "Monday",
@@ -214,9 +202,8 @@ TEST_CASE ("heuristic") {
             walking_time(geo_coords(1.2, 0.3).distance_to(end_point));
 
         node_database::node_storage nodes = db.nodes();
-        auto alpha_itr = find_node(nodes, "alpha");
-        CHECK( alpha_itr != nodes.end() );
-        std::chrono::minutes h = db.heuristic(**alpha_itr);
+        node* alpha = nodes["alpha"][0];
+        std::chrono::minutes h = db.heuristic(*alpha);
         INFO( "end point:" << end_point.longitude << "," << end_point.latitude );
         CHECK( h == expected_heuristic );
     }

@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include "node.hpp"
 #include "start_node.hpp"
 
@@ -9,7 +10,9 @@
  */
 class node_database {
 public:
-    using node_storage = std::vector<node*>;
+    /** Maps node_name => node* */
+    using node_vector = std::vector<node*>;
+    using node_storage = std::unordered_map<std::string, node_vector>;
 
     /**
      * Initializes a node database. Connects stops (makes neighbors) in the following manner:
@@ -34,7 +37,7 @@ public:
 
     start_node& starting_node();
     bool done_searching();
-    const node_storage& solved_nodes() const;
+    const node_vector& solved_nodes() const;
 
 private:
     /**
@@ -60,7 +63,7 @@ private:
     miles m_max_walking_distance;
     geo_coords m_start_point, m_end_point;
     start_node m_starting_node;
-    node_storage m_final_nodes;
-    node_storage m_solved_nodes;
+    node_vector m_final_nodes;
+    node_vector m_solved_nodes;
 };
 

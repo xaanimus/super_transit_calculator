@@ -4,11 +4,12 @@
 
 using namespace std::literals;
 using node_storage = node_database::node_storage;
+using node_vector = node_database::node_vector;
 
 /** TODO improve
  * checks if days a and b match
  */
-bool check_days_match(std::string a, std::string b) {
+bool check_days_match(const std::string& a, const std::string& b) {
     return a == b;
 }
 
@@ -32,12 +33,14 @@ node_database::node_database(transit_info info, std::chrono::minutes max_wait_ti
 }
 
 node_database::~node_database() {
-    for(node* n : m_nodes) {
-        delete n;
+    for(auto& kv : m_nodes) {
+        for(node* n: kv.second) {
+            delete n;
+        }
     }
 }
 
-node_database::node_storage& node_database::nodes() {
+node_storage& node_database::nodes() {
     return m_nodes;
 }
 
@@ -51,9 +54,9 @@ void node_database::add_schedule(const stop_info_schedule& schedule) {
     for (auto& stop : schedule.stops) {
         stop_node* new_node = new stop_node(stop.name, schedule.route_number, schedule.day,
                                             stop.direction, stop.time_of_stop,
-                                            std::vector<edge>(), optional_edge_nil, 0,
+                                            edge_storage(), optional_edge_nil, 0,
                                             stop.location );
-        m_nodes.push_back(new_node);
+        m_nodes[new_node->name()].push_back(new_node);
         if (previous_node != nullptr) {
             std::chrono::minutes diff =
                 previous_node->time_of_stop().difference_to(new_node->time_of_stop());
@@ -70,67 +73,87 @@ void node_database::connect_nodes_from_stops() {
     //    look up stop for node
     //    for each next stop' from stop, add stop' to node.neighbors
 
-    for (node* n: m_nodes) {
-        std::string stop_name = n->name();
+    for (auto& kv : m_nodes) {
+        for (node* n: kv.second) {
+            std::string stop_name = n->name();
 
-        //iter thru m_nodes that have same name as n
-        //same day
-        for (node* other_node: m_nodes) {
-            std::chrono::minutes wait_time =
-                n->time_of_stop().difference_to(other_node->time_of_stop());
-            bool too_much_waiting = wait_time > m_max_wait_time;
-            bool days_match = check_days_match(n->day(), other_node->day());
-
-            if (other_node->name() != stop_name ||
-                other_node == n || !days_match ||
-                too_much_waiting )
-            {
+            //iter thru m_nodes that have same name as n
+            //same day
+            auto nodes_with_name = m_nodes.find(stop_name);
+            if (nodes_with_name == m_nodes.end()) {
                 continue;
             }
 
-            for (const edge& neighbor: other_node->neighbors()) {
-                //TODO use correct diff
-                edge new_edge = {wait_time + neighbor.time_interval, neighbor.neighbor};
-                static_cast<stop_node*>(n)->add_neighbor_no_repeat(new_edge);
+            for (auto& other_node : nodes_with_name->second) {
+                bool days_match = check_days_match(n->day(), other_node->day());
+
+                if (other_node == n || !days_match) {
+                    continue;
+                }
+
+                std::chrono::minutes wait_time =
+                    n->time_of_stop().difference_to(other_node->time_of_stop());
+                bool too_much_waiting = wait_time > m_max_wait_time;
+                if (too_much_waiting) {
+                    continue;
+                }
+
+                for (const edge& neighbor: other_node->neighbors()) {
+                    edge new_edge = {wait_time + neighbor.time_interval, neighbor.neighbor};
+                    static_cast<stop_node*>(n)->add_neighbor(std::move(new_edge));
+                }
             }
         }
     }
 }
 
 void node_database::connect_nodes_by_walking() {
-    for (node* n: m_nodes) {
-        for(node* other: m_nodes) {
-            miles distance = n->location().distance_to(other->location());
-            bool days_match = check_days_match(n->day(), other->day());
-            if (n == other || distance > m_max_walking_distance || !days_match)
-            {
+    for (auto& kv : m_nodes) {
+        for(auto& other_kv: m_nodes) {
+            node* first_n = kv.second[0];
+            node* first_other = other_kv.second[0];
+            miles distance = first_n->location().distance_to(first_other->location());
+            if (distance > m_max_walking_distance) {
                 continue;
             }
-            edge new_edge = {walking_time(distance), *other};
-            static_cast<stop_node*>(n)->add_neighbor_no_repeat(new_edge);
+
+            for (node* n : kv.second) {
+                for (node* other : other_kv.second) {
+                    bool days_match = check_days_match(n->day(), other->day());
+                    if (!days_match) {
+                        continue;
+                    }
+                    edge new_edge = {walking_time(distance), *other};
+                    static_cast<stop_node*>(n)->add_neighbor(new_edge);
+                }
+            }
         }
     }
 }
 
 void node_database::connect_starting_nodes() {
-    for (node* n: m_nodes) {
-        miles dist = n->location().distance_to(m_starting_node.location());
-        if (dist > m_max_walking_distance) {
-            continue;
-        } else {
-            edge new_neighbor = {walking_time(dist), *n};
-            m_starting_node.neighbors().push_back(new_neighbor);
+    for (auto& kv: m_nodes) {
+        for (node* n : kv.second) {
+            miles dist = n->location().distance_to(m_starting_node.location());
+            if (dist > m_max_walking_distance) {
+                continue;
+            } else {
+                edge new_neighbor = {walking_time(dist), *n};
+                m_starting_node.neighbors().insert(std::move(new_neighbor));
+            }
         }
     }
 }
 
 void node_database::add_final_nodes() {
-    for (node* n: m_nodes) {
-        miles dist = m_end_point.distance_to(n->location());
-        if (dist > m_max_walking_distance) {
-            continue;
-        } else {
-            m_final_nodes.push_back(n);
+    for (auto& kv : m_nodes) {
+        for (node* n : kv.second) {
+            miles dist = m_end_point.distance_to(n->location());
+            if (dist > m_max_walking_distance) {
+                continue;
+            } else {
+                m_final_nodes.push_back(n);
+            }
         }
     }
 }
@@ -152,6 +175,6 @@ start_node& node_database::starting_node() {
     return m_starting_node;
 }
 
-const node_storage& node_database::solved_nodes() const {
+const node_vector& node_database::solved_nodes() const {
     return m_solved_nodes;
 }

@@ -106,8 +106,8 @@ TEST_CASE("find airport -> statler") {
         .start_day = "Weekdays", //doesn't make sense, will fix this later
         .info = info,
         .end_position = {-76.482567, 42.445983},
-        .max_wait_time = 30min,
-        .max_walk_dist = 0.3_mi
+        .max_wait_time = 7min,
+        .max_walk_dist = 0.1_mi
     };
 
     std::cout << "hi" << std::endl;

@@ -12,7 +12,7 @@ void node::set_time(std::chrono::minutes new_time) {
 }
 
 stop_node::stop_node(std::string name_, int route_number_, std::string day_,
-                     std::string direction_, time_hm time_of_stop_, std::vector<edge> neighbors_,
+                     std::string direction_, time_hm time_of_stop_, edge_storage neighbors_,
                      optional_edge previous_, miles distance_, geo_coords location_)
     : m_name(name_), m_route_num(route_number_), m_day(day_), m_direction(direction_),
       m_time_of_stop(time_of_stop_), m_neighbors(neighbors_), m_location(location_),
@@ -38,7 +38,7 @@ time_hm stop_node::time_of_stop() const {
     return m_time_of_stop;
 }
 
-std::vector<edge>& stop_node::neighbors() {
+edge_storage& stop_node::neighbors() {
     return m_neighbors;
 }
 
@@ -62,17 +62,6 @@ void stop_node::set_distance(miles dist) {
     m_distance = dist;
 }
 
-void stop_node::add_neighbor(edge neighbor) {
-    m_neighbors.push_back(neighbor);
-}
-
-void stop_node::add_neighbor_no_repeat(edge neighbor) {
-    auto result = std::find_if(m_neighbors.begin(), m_neighbors.end(),
-                               [&neighbor](edge each_neighbor){
-                                   return &each_neighbor == &neighbor;
-                               });
-
-    if (result == m_neighbors.end()) {
-        m_neighbors.push_back(neighbor);
-    }
+void stop_node::add_neighbor(const edge& neighbor) {
+    m_neighbors.insert(neighbor);
 }

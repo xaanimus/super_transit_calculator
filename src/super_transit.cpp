@@ -221,9 +221,11 @@ std::vector<stransit::trip> stransit::get_trips(stransit::trip_options options) 
     {
         auto nodes = db.nodes();
         std::cout << "VISITED NODES:" << std::endl;
-        for (node* n: nodes) {
-            if (n->visited) {
-                std::cout << n->name() << std::endl;
+        for (auto& kv : nodes) {
+            for (node* n : kv.second){
+                if (n->visited) {
+                    std::cout << n->name() << std::endl;
+                }
             }
         }
         std::cout << "END VISITED NODES:" << std::endl;

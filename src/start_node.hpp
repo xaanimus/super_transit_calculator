@@ -15,7 +15,7 @@ public:
     std::string day() const;
     std::string direction() const;
     time_hm time_of_stop() const;
-    std::vector<edge>& neighbors();
+    edge_storage& neighbors();
     const geo_coords& location() const;
 
     const optional_edge& previous() const;
@@ -26,7 +26,7 @@ public:
 private:
     std::string m_current_day;
     time_hm m_current_time;
-    std::vector<edge> m_neighbors;
+    edge_storage m_neighbors;
     geo_coords m_location;
 
     optional_edge m_previous;

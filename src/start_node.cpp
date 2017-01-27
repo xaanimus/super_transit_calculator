@@ -24,7 +24,7 @@ time_hm start_node::time_of_stop() const {
     return m_current_time;
 }
 
-std::vector<edge>& start_node::neighbors() {
+edge_storage& start_node::neighbors() {
     return m_neighbors;
 }
 
