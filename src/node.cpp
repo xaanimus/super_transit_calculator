@@ -11,6 +11,10 @@ void node::set_time(std::chrono::minutes new_time) {
     this->set_distance(walking_distance_for_time(new_time));
 }
 
+vec2 node::get_node_position::operator()(node* n) {
+    return n->location().copy_as_vec2();
+}
+
 stop_node::stop_node(std::string name_, int route_number_, std::string day_,
                      std::string direction_, time_hm time_of_stop_, edge_storage neighbors_,
                      optional_edge previous_, miles distance_, geo_coords location_)

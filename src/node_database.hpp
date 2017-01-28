@@ -1,6 +1,8 @@
 #include <unordered_map>
 #include "node.hpp"
 #include "start_node.hpp"
+#include "quadtree.hpp"
+
 
 /**
  * Stores nodes to be used by the search algorithm.
@@ -17,7 +19,7 @@ public:
     /**
      * Initializes a node database. Connects stops (makes neighbors) in the following manner:
      * 1. Each stop is connected to the next stop in its schedule if it exists
-     * 2. 
+     * 2.
      */
     node_database(transit_info info, std::chrono::minutes max_wait_time,
                   miles max_walking_distance, geo_coords start_point, geo_coords end_point,
@@ -65,5 +67,5 @@ private:
     start_node m_starting_node;
     node_vector m_final_nodes;
     node_vector m_solved_nodes;
+    quadtree<node*, node::get_node_position> m_node_location_searcher;
 };
-

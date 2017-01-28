@@ -1,3 +1,7 @@
+//#define TEST_SEARCH_DISABLED
+
+#ifndef TEST_SEARCH_DISABLED
+
 #include <iostream>
 #include <fstream>
 #include <catch.hpp>
@@ -114,3 +118,5 @@ TEST_CASE("find airport -> statler") {
     std::vector<trip> trips = get_trips(options);
     std::cout << trips.size() << std::endl;
 }
+
+#endif // TEST_SEARCH_DISABLED

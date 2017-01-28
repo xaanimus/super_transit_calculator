@@ -39,8 +39,8 @@ public:
     virtual ~node();
 
     virtual std::string name() const = 0;
-    virtual int route_number() const = 0; //no
-    virtual std::string day() const = 0;  //no
+    virtual int route_number() const = 0;
+    virtual std::string day() const = 0;
     virtual std::string direction() const = 0;
     virtual time_hm time_of_stop() const = 0;
     virtual edge_storage& neighbors() = 0;
@@ -55,6 +55,10 @@ public:
     void set_time(std::chrono::minutes new_time);
 
     bool visited = false;
+
+    struct get_node_position {
+        vec2 operator()(node* n);
+    };
 };
 
 

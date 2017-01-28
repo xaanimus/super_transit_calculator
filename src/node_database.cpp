@@ -57,6 +57,7 @@ void node_database::add_schedule(const stop_info_schedule& schedule) {
                                             edge_storage(), optional_edge_nil, 0,
                                             stop.location );
         m_nodes[new_node->name()].push_back(new_node);
+        m_node_location_searcher.insert(new_node);
         if (previous_node != nullptr) {
             std::chrono::minutes diff =
                 previous_node->time_of_stop().difference_to(new_node->time_of_stop());
@@ -109,6 +110,26 @@ void node_database::connect_nodes_from_stops() {
 
 void node_database::connect_nodes_by_walking() {
     for (auto& kv : m_nodes) {
+        node* first_n = kv.second[0];
+        auto bounds = quadtree_bounds::from_location_radius(first_n->location().copy_as_vec2(),
+                                                            m_max_walking_distance);
+        std::vector<node*> other_nodes = m_node_location_searcher.search_range(bounds);
+
+        for (node* other : other_nodes) {
+            miles distance = first_n->location().distance_to(other->location());
+            for (node* n : kv.second) {
+                bool days_match = check_days_match(n->day(), other->day());
+                if (!days_match) {
+                    continue;
+                }
+                edge new_edge = {walking_time(distance), *other};
+                static_cast<stop_node*>(n)->add_neighbor(new_edge);
+            }
+        }
+    }
+
+    /*
+    for (auto& kv : m_nodes) {
         for(auto& other_kv: m_nodes) {
             node* first_n = kv.second[0];
             node* first_other = other_kv.second[0];
@@ -129,6 +150,7 @@ void node_database::connect_nodes_by_walking() {
             }
         }
     }
+    */
 }
 
 void node_database::connect_starting_nodes() {
