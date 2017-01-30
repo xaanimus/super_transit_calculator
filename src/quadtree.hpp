@@ -138,10 +138,34 @@ void stransit::quadtree<Element, Coords>::insert(Element elem) {
     }
 }
 
+static double distance_sort_func(const vec2& a, const vec2& b) {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return dx * dx + dy + dy;
+}
+
+template <typename Element, typename Coords>
+void insert_sorted(std::vector<Element>& vec,
+                   const Element& elem,
+                   const vec2& center, Coords get_coords) {
+    //vec[0 -> n] is smallest -> biggest distance
+    double dist_sort_elem = distance_sort_func(get_coords(elem), center);
+    for (auto itr = vec.begin(); itr < vec.end(); itr++) {
+        double dist_sort_v = distance_sort_func(get_coords(*itr), center);
+        if (dist_sort_v < dist_sort_elem) {
+            vec.insert(itr, elem);
+            return;
+        }
+    }
+    vec.push_back(elem);
+}
 
 template <typename Element, typename Coords>
 std::vector<Element>
 stransit::quadtree<Element, Coords>::search_range(quadtree_bounds search_bounds) {
+    vec2 center = {(search_bounds.maxX + search_bounds.minX) / 2,
+                   (search_bounds.maxY + search_bounds.minY) / 2};
+
     std::vector<Element> result;
     if (m_root == nullptr) {
         return result;
@@ -164,7 +188,7 @@ stransit::quadtree<Element, Coords>::search_range(quadtree_bounds search_bounds)
             to_search.push_back(qnode->bottom_right.get());
 
             if (search_bounds.contains(m_get_coords(qnode->elem))) {
-                result.push_back(qnode->elem);
+                insert_sorted(result, qnode->elem, center, m_get_coords);
             }
         }
 

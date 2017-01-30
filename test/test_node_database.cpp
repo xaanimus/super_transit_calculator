@@ -21,7 +21,7 @@ TEST_CASE("Add Schedule") {
         }
     };
 
-    node_database db(blank_transit_info, 1min, 0, {}, {}, DAY_ANY, {12h, 0min});
+    node_database db(blank_transit_info, 1min, 0, {}, {}, DAY_ANY, {12h, 0min}, 1000);
     db.add_schedule(schedule);
 
     REQUIRE(db.nodes().size() == 3);
@@ -108,7 +108,7 @@ TEST_CASE("connect nodes from stops") {
 
     transit_info info = {{schedule_1, schedule_2}};
 
-    node_database db(info, 50min, 0, {}, {}, DAY_ANY, {12h, 0min});
+    node_database db(info, 50min, 0, {}, {}, DAY_ANY, {12h, 0min}, 1000);
 
     node_database::node_storage& nodes = db.nodes();
 
@@ -156,7 +156,7 @@ TEST_CASE("connect nodes walking") {
 
     transit_info info = {{sched_1, sched_2}};
 
-    node_database db(info, 50min, miles(0.1), {}, {}, DAY_ANY, {12h, 0min});
+    node_database db(info, 50min, miles(0.1), {}, {}, DAY_ANY, {12h, 0min}, 1000);
 
     node_database::node_storage& nodes = db.nodes();
 
@@ -197,7 +197,7 @@ TEST_CASE ("heuristic") {
     };
 
     for (geo_coords& end_point: end_points) {
-        node_database db({{sched_1}}, 0min, 0, {0,0}, end_point, DAY_ANY, {12h, 0min});
+        node_database db({{sched_1}}, 0min, 0, {0,0}, end_point, DAY_ANY, {12h, 0min}, 1000);
         std::chrono::minutes expected_heuristic =
             walking_time(geo_coords(1.2, 0.3).distance_to(end_point));
 

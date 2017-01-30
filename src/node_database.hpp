@@ -23,7 +23,7 @@ public:
      */
     node_database(transit_info info, std::chrono::minutes max_wait_time,
                   miles max_walking_distance, geo_coords start_point, geo_coords end_point,
-                  std::string starting_day, time_hm starting_time);
+                  std::string starting_day, time_hm starting_time, int max_num_walking_stops);
     ~node_database();
 
     node_storage& nodes();
@@ -68,4 +68,5 @@ private:
     node_vector m_final_nodes;
     node_vector m_solved_nodes;
     quadtree<node*, node::get_node_position> m_node_location_searcher;
+    int m_max_num_walking_stops;
 };

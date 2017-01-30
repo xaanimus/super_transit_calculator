@@ -4,6 +4,8 @@
 #include "super_transit.hpp"
 #include <memory.h>
 #include <unordered_set>
+#include <set>
+#include <iostream>
 
 using namespace stransit;
 using namespace std::literals;
@@ -22,7 +24,16 @@ struct edge {
 
 struct edge_hash {
     size_t operator() (const edge& e) {
-        return (size_t) &e.neighbor;
+        std::uintptr_t num = (std::uintptr_t)&e.neighbor;
+        auto hash = std::hash<std::uintptr_t>();
+        size_t h = hash(num);
+        return h;
+    }
+};
+
+struct edge_less {
+    bool operator () (const edge& lhs, const edge& rhs) {
+        return &lhs.neighbor < &rhs.neighbor;
     }
 };
 
@@ -32,7 +43,8 @@ struct edge_equal_to {
     }
 };
 
-using edge_storage = std::unordered_set<edge, edge_hash, edge_equal_to>;
+//using edge_storage = std::unordered_set<edge, edge_hash, edge_equal_to>;
+using edge_storage = std::set<edge, edge_less>;
 
 class node {
 public:

@@ -199,7 +199,7 @@ transit_info stransit::generate_transit_info_from_json(const std::string& stop_s
 std::vector<stransit::trip> stransit::get_trips(stransit::trip_options options) {
     node_database db(options.info, options.max_wait_time, options.max_walk_dist,
                      options.start_position, options.end_position,
-                     options.start_day, options.start_time);
+                     options.start_day, options.start_time, options.max_num_walking_stops);
 
     perform_search(db);
 

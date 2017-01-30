@@ -73,6 +73,8 @@ namespace stransit {
 
         std::chrono::minutes max_wait_time;
         miles max_walk_dist;
+
+        int max_num_walking_stops;
     };
 
     std::vector<trip> get_trips(trip_options options);
