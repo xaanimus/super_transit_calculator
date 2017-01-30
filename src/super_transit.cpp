@@ -7,8 +7,6 @@
 #include "super_transit.hpp"
 #include "node_database.hpp"
 
-#define DEBUG_TIMEOUT
-
 using namespace stransit;
 using namespace std::literals;
 
@@ -35,10 +33,6 @@ using node_priority_queue = std::priority_queue<node_wrapper, std::vector<node_w
  */
 static void perform_search(node_database& db) {
 
-#ifdef DEBUG_TIMEOUT
-    int counter = 0;
-#endif
-
     node_priority_queue pq;
     pq.emplace(&db.starting_node(), db.starting_node().time());
 
@@ -60,13 +54,6 @@ static void perform_search(node_database& db) {
                 neighbor.set_previous(prev);
             }
         }
-
-#ifdef DEBUG_TIMEOUT
-        counter++;
-        if (counter > 1000) {
-            break;
-        }
-#endif
 
     }
 }
@@ -215,22 +202,6 @@ std::vector<stransit::trip> stransit::get_trips(stransit::trip_options options) 
                      options.start_day, options.start_time);
 
     perform_search(db);
-
-
-#ifdef DEBUG_TIMEOUT
-    {
-        auto nodes = db.nodes();
-        std::cout << "VISITED NODES:" << std::endl;
-        for (auto& kv : nodes) {
-            for (node* n : kv.second){
-                if (n->visited) {
-                    std::cout << n->name() << std::endl;
-                }
-            }
-        }
-        std::cout << "END VISITED NODES:" << std::endl;
-    }
-#endif
 
     std::vector<node*> solved = db.solved_nodes();
     std::vector<stransit::trip> result_trips;

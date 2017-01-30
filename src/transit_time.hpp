@@ -14,7 +14,6 @@ namespace stransit {
         time_hm add(const time_hm& other) const;
         time_hm add(const std::chrono::minutes& other) const;
         std::string to_string() const;
-    private:
         std::chrono::hours m_hours;
         std::chrono::minutes m_minutes;
     };
