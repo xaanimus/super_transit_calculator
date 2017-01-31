@@ -31,6 +31,7 @@ namespace stransit {
         };
 
         std::vector<trip_waypoint> waypoints;
+        std::chrono::minutes duration_of_travel;
     };
 
     struct stop_info {

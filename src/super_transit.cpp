@@ -214,6 +214,8 @@ std::vector<stransit::trip> stransit::get_trips(stransit::trip_options options) 
         std::chrono::minutes time_walk_to_destination = walking_time(dist_walk_to_destination);
         time_hm time_of_arrival = n->time_of_stop().add(time_walk_to_destination);
 
+        result.duration_of_travel = n->time() + time_walk_to_destination;
+
         result.waypoints.push_back({
                 .name = "Destination",
                     .time = time_of_arrival,
