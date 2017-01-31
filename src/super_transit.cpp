@@ -128,6 +128,16 @@ schedules_iterator find_matching_schedule(schedules_iterator begin, schedules_it
                         });
 }
 
+static void insert_stop_sorted(std::vector<stop_info>& stops, stop_info stop) {
+    for (auto itr = stops.begin(); itr < stops.end(); itr++) {
+        if (stop.time_of_stop.compare(itr->time_of_stop).count() < 0) {
+            stops.insert(itr, stop);
+            return;
+        }
+    }
+    stops.push_back(stop);
+}
+
 void transit_info::add_stop(const stop_info& stop) {
     schedules_iterator itr;
     itr = find_matching_schedule(stop_schedules.begin(),
@@ -138,14 +148,14 @@ void transit_info::add_stop(const stop_info& stop) {
             .route_number = stop.route_number,
             .day = stop.day,
             .direction = stop.direction,
-            .stops = {}
+            .stops = {stop}
         };
         stop_schedules.push_back(new_schedule);
         return;
     }
 
     while (itr < stop_schedules.end()) {
-        itr->stops.push_back(stop);
+        insert_stop_sorted(itr->stops, stop);
         itr = find_matching_schedule(++itr,
                                      stop_schedules.end(), stop);
 

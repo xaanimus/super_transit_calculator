@@ -35,3 +35,9 @@ time_hm time_hm::add(const time_hm& other) const {
 time_hm time_hm::add(const std::chrono::minutes& other) const {
     return add({0h, other});
 }
+
+std::chrono::minutes time_hm::compare(const time_hm& other) const {
+    std::chrono::hours hour_diff = m_hours - other.m_hours;
+    std::chrono::minutes min_diff = m_minutes - other.m_minutes;
+    return hour_diff + min_diff;
+}

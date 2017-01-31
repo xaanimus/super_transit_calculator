@@ -60,6 +60,8 @@ namespace stransit {
          * Grouped by route_number, day, direction
          */
         std::vector<stop_info_schedule> stop_schedules;
+        /** Adds stop into schedule, in order
+         */
         void add_stop(const stop_info& stop);
     };
 
