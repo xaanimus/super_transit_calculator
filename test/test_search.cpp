@@ -15,25 +15,25 @@ using namespace stransit::literals;
 TEST_CASE("search1") {
     stop_info_schedule sched1 = {
         .route_number = 1,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"alpha", 1, "Monday", "Outbound", {12h, 30min}, {1.22, 3.2}},
-            {"bravo", 1, "Monday", "Outbound", {12h, 40min}, {1.22, 3.202}},
-            {"charlie", 1, "Monday", "Outbound", {13h, 03min}, {1.2201, 3.21}},
-            {"delta", 1, "Monday", "Outbound", {13h, 30min}, {1.3204, 3.22}},
+            {"alpha", 1, day_set_monday, "Outbound", {12h, 30min}, {1.22, 3.2}},
+            {"bravo", 1, day_set_monday, "Outbound", {12h, 40min}, {1.22, 3.202}},
+            {"charlie", 1, day_set_monday, "Outbound", {13h, 03min}, {1.2201, 3.21}},
+            {"delta", 1, day_set_monday, "Outbound", {13h, 30min}, {1.3204, 3.22}},
         }
     };
 
     stop_info_schedule sched2 = {
         .route_number = 2,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"echo", 2, "Monday", "Outbound", {12h, 31min}, {1.22001, 3.2001}},
-            {"foxtrot", 2, "Monday", "Outbound", {12h, 50min}, {1.223, 3.202}},
-            {"charlie", 2, "Monday", "Outbound", {13h, 05min}, {1.2201, 3.21}},
-            {"golf", 2, "Monday", "Outbound", {13h, 15min}, {1.3205, 3.2202}},
+            {"echo", 2, day_set_monday, "Outbound", {12h, 31min}, {1.22001, 3.2001}},
+            {"foxtrot", 2, day_set_monday, "Outbound", {12h, 50min}, {1.223, 3.202}},
+            {"charlie", 2, day_set_monday, "Outbound", {13h, 05min}, {1.2201, 3.21}},
+            {"golf", 2, day_set_monday, "Outbound", {13h, 15min}, {1.3205, 3.2202}},
         }
     };
 
@@ -43,7 +43,7 @@ TEST_CASE("search1") {
     trip_options options = {
         .start_position = start_loc,
         .start_time = {12h, 0min},
-        .start_day = "Monday",
+        .start_day = day_type::day_monday,
         .info = {
             .stop_schedules = {sched1, sched2}
         },
@@ -107,7 +107,7 @@ TEST_CASE("find airport -> statler") {
     trip_options options = {
         .start_position = {-76.4626, 42.489067},
         .start_time = {10h, 0min},
-        .start_day = "Weekdays", //doesn't make sense, will fix this later
+        .start_day = day_type::day_monday, //doesn't make sense, will fix this later
         .info = info,
         .end_position = {-76.482567, 42.445983},
         .max_wait_time = 14min,

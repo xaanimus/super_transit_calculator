@@ -1,6 +1,6 @@
 #include "start_node.hpp"
 
-start_node::start_node(std::string current_day, time_hm current_time, geo_coords location)
+start_node::start_node(day_type current_day, time_hm current_time, geo_coords location)
     : m_current_day(current_day), m_current_time(current_time), m_neighbors(),
       m_location(location), m_previous() {}
 
@@ -12,12 +12,12 @@ int start_node::route_number() const {
     return -1;
 }
 
-std::string start_node::day() const {
+day_set start_node::day() const {
     return m_current_day;
 }
 
 std::string start_node::direction() const {
-    return DAY_ANY;
+    return "Starting_Direction";
 }
 
 time_hm start_node::time_of_stop() const {

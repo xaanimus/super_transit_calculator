@@ -15,7 +15,7 @@ vec2 node::get_node_position::operator()(node* n) {
     return n->location().copy_as_vec2();
 }
 
-stop_node::stop_node(std::string name_, int route_number_, std::string day_,
+stop_node::stop_node(std::string name_, int route_number_, day_set day_,
                      std::string direction_, time_hm time_of_stop_, edge_storage neighbors_,
                      optional_edge previous_, miles distance_, geo_coords location_)
     : m_name(name_), m_route_num(route_number_), m_day(day_), m_direction(direction_),
@@ -30,7 +30,7 @@ int stop_node::route_number() const {
     return m_route_num;
 }
 
-std::string stop_node::day() const {
+day_set stop_node::day() const {
     return m_day;
 }
 

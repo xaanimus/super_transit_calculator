@@ -15,7 +15,7 @@ bool check_days_match(const std::string& a, const std::string& b) {
 
 node_database::node_database(transit_info info, std::chrono::minutes max_wait_time,
                              miles max_walking_distance, geo_coords start_point,
-                             geo_coords end_point, std::string starting_day,
+                             geo_coords end_point, day_type starting_day,
                              time_hm starting_time, int max_num_walking_stops)
     : m_max_wait_time(max_wait_time), m_max_walking_distance(max_walking_distance),
       m_start_point(start_point), m_end_point(end_point),
@@ -87,7 +87,8 @@ void node_database::connect_nodes_from_stops() {
             }
 
             for (auto& other_node : nodes_with_name->second) {
-                bool days_match = check_days_match(n->day(), other_node->day());
+                bool days_match = n->day().overlap(other_node->day());
+                //bool days_match = check_days_match(n->day(), other_node->day());
 
                 if (other_node == n || !days_match) {
                     continue;
@@ -123,7 +124,8 @@ void node_database::connect_nodes_by_walking() {
             }
             miles distance = first_n->location().distance_to(other->location());
             for (node* n : kv.second) {
-                bool days_match = check_days_match(n->day(), other->day());
+                bool days_match = n->day().overlap(other->day());
+                //bool days_match = check_days_match(n->day(), other->day());
                 if (!days_match) {
                     continue;
                 }

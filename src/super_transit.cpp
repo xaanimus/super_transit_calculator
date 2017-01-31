@@ -121,9 +121,9 @@ using schedules_iterator = std::vector<stop_info_schedule>::iterator;
 schedules_iterator find_matching_schedule(schedules_iterator begin, schedules_iterator end,
                                           const stop_info& stop) {
     return std::find_if(begin, end,
-                        [&stop](const stop_info_schedule& schedule)->bool{
+                        [&stop](const stop_info_schedule& schedule) -> bool {
                             return schedule.route_number == stop.route_number &&
-                                schedule.day == stop.day &&
+                                schedule.day.overlap(stop.day) &&
                                 schedule.direction == stop.direction;
                         });
 }
@@ -174,11 +174,12 @@ transit_info stransit::generate_transit_info_from_json(const std::string& stop_s
 
         std::string name = elem["Stop"];
         int route = elem["Route"];
-        std::string day = elem["Day"];
+        std::string day_str = elem["Day"];
         std::string direction = elem["Direction"];
         std::string time_str = elem["Time"];
         time_hm t = parse_time(time_str);
         geo_coords loc = locations.at(name);
+        day_set day = day_set(day_str);
 
         stop_info stop = {
             .name = name,

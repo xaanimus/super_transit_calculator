@@ -23,7 +23,7 @@ public:
      */
     node_database(transit_info info, std::chrono::minutes max_wait_time,
                   miles max_walking_distance, geo_coords start_point, geo_coords end_point,
-                  std::string starting_day, time_hm starting_time, int max_num_walking_stops);
+                  day_type starting_day, time_hm starting_time, int max_num_walking_stops);
     ~node_database();
 
     node_storage& nodes();

@@ -12,16 +12,17 @@ TEST_CASE("Add Schedule") {
 
     stop_info_schedule schedule = {
         .route_number = 1,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"alpha", 1, "Monday", "Outbound", time_hm(2h, 30min), {}},
-            {"bravo", 1, "Monday", "Outbound", time_hm(2h, 34min), {}},
-            {"charlie", 1, "Monday", "Outbound", time_hm(2h, 40min), {}},
+            {"alpha", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {}},
+            {"bravo", 1, day_set_monday, "Outbound", time_hm(2h, 34min), {}},
+            {"charlie", 1, day_set_monday, "Outbound", time_hm(2h, 40min), {}},
         }
     };
 
-    node_database db(blank_transit_info, 1min, 0, {}, {}, DAY_ANY, {12h, 0min}, 1000);
+    node_database db(blank_transit_info, 1min, 0, {}, {}, day_type::day_monday,
+                     {12h, 0min}, 1000);
     db.add_schedule(schedule);
 
     REQUIRE(db.nodes().size() == 3);
@@ -87,28 +88,28 @@ TEST_CASE("connect nodes from stops") {
     //both routes go through stop "bravo"
     stop_info_schedule schedule_1 = {
         .route_number = 1,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"alpha", 1, "Monday", "Outbound", time_hm(2h, 30min), {}},
-            {"bravo", 1, "Monday", "Outbound", time_hm(2h, 34min), {}},
-            {"charlie", 1, "Monday", "Outbound", time_hm(2h, 40min), {}},
+            {"alpha", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {}},
+            {"bravo", 1, day_set_monday, "Outbound", time_hm(2h, 34min), {}},
+            {"charlie", 1, day_set_monday, "Outbound", time_hm(2h, 40min), {}},
         }
     };
     stop_info_schedule schedule_2 = {
         .route_number = 2,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"delta", 1, "Monday", "Outbound", time_hm(2h, 30min), {}},
-            {"bravo", 1, "Monday", "Outbound", time_hm(2h, 50min), {}},
-            {"echo", 1, "Monday", "Outbound", time_hm(3h, 40min), {}},
+            {"delta", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {}},
+            {"bravo", 1, day_set_monday, "Outbound", time_hm(2h, 50min), {}},
+            {"echo", 1, day_set_monday, "Outbound", time_hm(3h, 40min), {}},
         }
     };
 
     transit_info info = {{schedule_1, schedule_2}};
 
-    node_database db(info, 50min, 0, {}, {}, DAY_ANY, {12h, 0min}, 1000);
+    node_database db(info, 50min, 0, {}, {}, day_type::day_monday, {12h, 0min}, 1000);
 
     node_database::node_storage& nodes = db.nodes();
 
@@ -134,29 +135,29 @@ TEST_CASE("connect nodes walking") {
 
     stop_info_schedule sched_1 = {
         .route_number = 1,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"alpha", 1, "Monday", "Outbound", time_hm(2h, 30min), {0, 0}},
-            {"bravo", 1, "Monday", "Outbound", time_hm(2h, 34min), {0, 0.01}},
-            {"charlie", 1, "Monday", "Outbound", time_hm(2h, 40min), {0, 0.02}},
+            {"alpha", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {0, 0}},
+            {"bravo", 1, day_set_monday, "Outbound", time_hm(2h, 34min), {0, 0.01}},
+            {"charlie", 1, day_set_monday, "Outbound", time_hm(2h, 40min), {0, 0.02}},
         }
     };
 
     stop_info_schedule sched_2 = {
         .route_number = 2,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"delta", 1, "Monday", "Outbound", time_hm(2h, 30min), {0.001, 0}},
-            {"echo", 1, "Monday", "Outbound", time_hm(2h, 34min), {0.001, 0.01}},
-            {"foxtrot", 1, "Monday", "Outbound", time_hm(2h, 40min), {0.001, 0.02}},
+            {"delta", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {0.001, 0}},
+            {"echo", 1, day_set_monday, "Outbound", time_hm(2h, 34min), {0.001, 0.01}},
+            {"foxtrot", 1, day_set_monday, "Outbound", time_hm(2h, 40min), {0.001, 0.02}},
         }
     };
 
     transit_info info = {{sched_1, sched_2}};
 
-    node_database db(info, 50min, miles(0.1), {}, {}, DAY_ANY, {12h, 0min}, 1000);
+    node_database db(info, 50min, miles(0.1), {}, {}, day_type::day_monday, {12h, 0min}, 1000);
 
     node_database::node_storage& nodes = db.nodes();
 
@@ -178,12 +179,12 @@ TEST_CASE ("heuristic") {
 
     stop_info_schedule sched_1 = {
         .route_number = 1,
-        .day = "Monday",
+        .day = day_set_monday,
         .direction = "Outbound",
         .stops = {
-            {"alpha", 1, "Monday", "Outbound", time_hm(2h, 30min), {1.2, 0.3}},
-            {"bravo", 1, "Monday", "Outbound", time_hm(2h, 34min), {0, 0.01}},
-            {"charlie", 1, "Monday", "Outbound", time_hm(2h, 40min), {0, 0.02}},
+            {"alpha", 1, day_set_monday, "Outbound", time_hm(2h, 30min), {1.2, 0.3}},
+            {"bravo", 1, day_set_monday, "Outbound", time_hm(2h, 34min), {0, 0.01}},
+            {"charlie", 1, day_set_monday, "Outbound", time_hm(2h, 40min), {0, 0.02}},
         }
     };
 
@@ -197,7 +198,7 @@ TEST_CASE ("heuristic") {
     };
 
     for (geo_coords& end_point: end_points) {
-        node_database db({{sched_1}}, 0min, 0, {0,0}, end_point, DAY_ANY, {12h, 0min}, 1000);
+        node_database db({{sched_1}}, 0min, 0, {0,0}, end_point, day_type::day_monday, {12h, 0min}, 1000);
         std::chrono::minutes expected_heuristic =
             walking_time(geo_coords(1.2, 0.3).distance_to(end_point));
 

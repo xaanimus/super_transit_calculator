@@ -5,6 +5,7 @@
 #include <vector>
 #include "transit_time.hpp"
 #include "units_coords.hpp"
+#include "day_set.hpp"
 
 namespace stransit {
 
@@ -35,7 +36,7 @@ namespace stransit {
     struct stop_info {
         std::string name;
         int route_number;
-        std::string day;
+        day_set day;
         std::string direction;
         time_hm time_of_stop;
         geo_coords location;
@@ -48,7 +49,7 @@ namespace stransit {
      */
     struct stop_info_schedule {
         int route_number;
-        std::string day;
+        day_set day;
         std::string direction;
         std::vector<stop_info> stops;
     };
@@ -67,7 +68,7 @@ namespace stransit {
     struct trip_options {
         geo_coords start_position;
         time_hm start_time;
-        std::string start_day;
+        day_type start_day;
         transit_info info;
         geo_coords end_position;
 
