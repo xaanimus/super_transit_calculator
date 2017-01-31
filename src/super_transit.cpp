@@ -223,6 +223,21 @@ std::vector<stransit::trip> stransit::get_trips(stransit::trip_options options) 
                     .path_to_next = {0min, miles(0), ""}
             });
 
+
+        trip::trip_waypoint first_point = {
+            .name = n->name(),
+            .time = n->time_of_stop(),
+            .point_kind = trip::trip_waypoint::waypoint_stop,
+            .path_to_next = {
+                .period_of_travel = time_walk_to_destination,
+                .length_of_travel = dist_walk_to_destination,
+                .description = "TODO modify to provide description. ie take bus 2"
+            }
+        };
+
+        //std move
+        result.waypoints.insert(result.waypoints.begin(), first_point);
+
         optional_edge current_edge = n->previous();
         while (current_edge.neighbor != nullptr) {
             trip::trip_waypoint point = {
