@@ -55,7 +55,7 @@ void node_database::add_schedule(const stop_info_schedule& schedule) {
     for (auto& stop : schedule.stops) {
         stop_node* new_node = new stop_node(stop.name, schedule.route_number, schedule.day,
                                             stop.direction, stop.time_of_stop,
-                                            edge_storage(), optional_edge_nil, 0,
+                                            edge_storage(), optional_edge_nil, 0min,
                                             stop.location );
         m_nodes[new_node->name()].push_back(new_node);
         m_node_location_searcher.insert(new_node);

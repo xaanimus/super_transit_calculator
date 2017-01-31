@@ -40,10 +40,11 @@ void start_node::set_previous(const optional_edge& previous_node) {
     m_previous = previous_node;
 }
 
-miles start_node::distance() const {
-    return 0;
+std::chrono::minutes start_node::time() const {
+    return 0min;
 }
 
-void start_node::set_distance(miles) {
+/** Because this is a start_node, this will have no effect */
+void start_node::set_time(std::chrono::minutes) {
     return;
 }

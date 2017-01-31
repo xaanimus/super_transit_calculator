@@ -60,11 +60,9 @@ public:
 
     virtual const optional_edge& previous() const = 0;
     virtual void set_previous(const optional_edge& previous_node) = 0;
-    virtual miles distance() const = 0;
-    virtual void set_distance(miles dist) = 0;
 
-    std::chrono::minutes time();
-    void set_time(std::chrono::minutes new_time);
+    virtual std::chrono::minutes time() const = 0;
+    virtual void set_time(std::chrono::minutes new_time) = 0;
 
     bool visited = false;
 
@@ -85,7 +83,7 @@ class stop_node : public node {
 public:
     stop_node(std::string name_, int route_number_, day_set day_,
               std::string direction_, time_hm time_of_stop_, edge_storage neighbors,
-              optional_edge previous_, miles distance_, geo_coords location_);
+              optional_edge previous_, std::chrono::minutes duration_, geo_coords location_);
 
     std::string name() const override;
     int route_number() const override;
@@ -97,10 +95,11 @@ public:
 
     const optional_edge& previous() const override;
     void set_previous(const optional_edge& previous_node) override;
-    miles distance() const override;
-    void set_distance(miles dist) override;
     /// adds neighbor without repetition.
     void add_neighbor(const edge& neighbor);
+
+    std::chrono::minutes time() const override;
+    void set_time(std::chrono::minutes new_time) override;
 
 private:
     std::string m_name;
@@ -112,7 +111,7 @@ private:
     geo_coords m_location;
 
     optional_edge m_previous;
-    miles m_distance;
+    std::chrono::minutes m_duration;
 };
 
 
